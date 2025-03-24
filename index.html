@@ -3,32 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.3/dist/tailwind.min.css" rel="stylesheet">
+    <meta name="description" content="Simple, beautiful todo app with reminders and notifications">
+    <title>Todo App with Reminders | Stay Productive</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #f3f4f6, #e5e7eb);
+            min-height: 100vh;
+        }
+        .task-input {
+            transition: all 0.2s ease;
+        }
+        .task-input:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+        .submit-btn {
+            transition: all 0.2s ease;
+            background-image: linear-gradient(to right, #6366f1, #8b5cf6);
+        }
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
-    <div class="max-w-lg mx-auto py-10">
-        <h1 class="text-3xl font-bold mb-6 text-center">My Todo App</h1>
-        <form id="todoForm" class="bg-white p-6 rounded-lg shadow-md">
-            <div class="mb-4">
-                <label for="taskDescription" class="block text-sm font-medium mb-2">Task Description</label>
-                <input type="text" id="taskDescription" class="w-full p-2 border border-gray-300 rounded-md" required>
+<body class="text-gray-800 font-sans">
+    <div class="max-w-md mx-auto px-4 py-10">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="inline-block p-3 bg-indigo-100 rounded-full mb-4">
+                <i class="fas fa-tasks text-indigo-600 text-2xl"></i>
             </div>
-            <div class="mb-4">
-                <label for="dueDateTime" class="block text-sm font-medium mb-2">Due Date and Time</label>
-                <input type="datetime-local" id="dueDateTime" class="w-full p-2 border border-gray-300 rounded-md" required>
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2">Todo Reminder</h1>
+            <p class="text-gray-600">Never forget your important tasks</p>
+        </div>
+
+        <!-- Todo Form -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <form id="todoForm" class="space-y-4">
+                <div>
+                    <label for="taskDescription" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-pencil-alt mr-1 text-indigo-500"></i> Task Description
+                    </label>
+                    <input type="text" id="taskDescription" 
+                           class="task-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                           placeholder="What do you need to do?" required>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="dueDateTime" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="far fa-calendar-alt mr-1 text-indigo-500"></i> Due Date
+                        </label>
+                        <input type="datetime-local" id="dueDateTime" 
+                               class="task-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="reminderTime" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="far fa-bell mr-1 text-indigo-500"></i> Reminder Time
+                        </label>
+                        <input type="datetime-local" id="reminderTime" 
+                               class="task-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn w-full text-white p-3 rounded-lg font-bold">
+                    <i class="fas fa-plus-circle mr-2"></i> Add Task
+                </button>
+            </form>
+        </div>
+
+        <!-- Output Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-list-ul mr-2 text-indigo-500"></i> Your Tasks
+            </h3>
+            <div id="output" class="text-center py-6 text-gray-500">
+                <i class="fas fa-clipboard-list text-4xl opacity-30 mb-3"></i>
+                <p>No tasks added yet</p>
             </div>
-            <div class="mb-4">
-                <label for="reminderTime" class="block text-sm font-medium mb-2">Reminder Notification Time</label>
-                <input type="datetime-local" id="reminderTime" class="w-full p-2 border border-gray-300 rounded-md" required>
+            <div id="loadingIndicator" class="hidden text-center py-4">
+                <div class="inline-flex items-center text-indigo-600">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Creating your reminder...</span>
+                </div>
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md font-bold hover:bg-blue-400">Submit🚀</button>
-        </form>
-        <div id="output" class="mt-6 p-4 bg-white rounded-lg shadow-md"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-10 text-center text-gray-500 text-sm">
+            <a href="https://www.youtube.com/@Mone-on" target="_blank" class="text-indigo-600 hover:text-indigo-800">
+                Made with <i class="fas fa-heart text-red-500"></i> by Akshara
+            </a>
+        </footer>
     </div>
-    <footer class="text-center mt-10">
-        <a href="https://www.youtube.com/@saddamtechs" target="_blank" class="text-blue-500">Made with ❤️ By Saddam Tech</a>
-    </footer>
 
     <script>
         document.getElementById('todoForm').addEventListener('submit', function(event) {
@@ -38,10 +110,11 @@
             const dueDateTime = document.getElementById('dueDateTime').value;
             const reminderTime = document.getElementById('reminderTime').value;
             
-            const substitutedPrompt = `Generate a reminder for me to complete my task: "${taskDescription}" by ${dueDateTime}, and send me a notification at ${reminderTime}. Once I complete the task, move it to the Completed tab.`;
+            // Show loading indicator
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+            document.getElementById('output').innerHTML = '';
             
-            const output = document.getElementById('output');
-            output.innerText = '';
+            const substitutedPrompt = `Generate a reminder for me to complete my task: "${taskDescription}" by ${dueDateTime}, and send me a notification at ${reminderTime}. Once I complete the task, move it to the Completed tab.`;
             
             const websocket = new WebSocket('wss://backend.buildpicoapps.com/ask_ai_streaming_v2');
             
@@ -55,19 +128,63 @@
             });
             
             websocket.addEventListener("message", (event) => {
-                console.log(event.data);
-                output.innerText = `${output.innerText}${event.data}`;
+                const output = document.getElementById('output');
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                
+                if (loadingIndicator && !loadingIndicator.classList.contains('hidden')) {
+                    loadingIndicator.classList.add('hidden');
+                    
+                    // Format dates for display
+                    const dueDate = new Date(dueDateTime).toLocaleString();
+                    const reminderDate = new Date(reminderTime).toLocaleString();
+                    
+                    // Create task card
+                    output.innerHTML = `
+                        <div class="task-card bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-lg text-left">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-medium">${taskDescription}</h4>
+                                <div class="flex space-x-2">
+                                    <button class="text-indigo-400 hover:text-indigo-600">
+                                        <i class="far fa-edit"></i>
+                                    </button>
+                                    <button class="text-indigo-400 hover:text-red-600">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-3">
+                                <div class="flex items-center mb-1">
+                                    <i class="far fa-calendar-alt mr-2"></i>
+                                    <span>Due: ${dueDate}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="far fa-bell mr-2"></i>
+                                    <span>Reminder: ${reminderDate}</span>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-indigo-100">
+                                <p class="text-sm"><span class="font-medium">AI Suggestion:</span> <span id="aiResponse">${event.data}</span></p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Append to existing response
+                    const aiResponse = document.getElementById('aiResponse');
+                    if (aiResponse) {
+                        aiResponse.textContent += event.data;
+                    }
+                }
             });
 
             websocket.addEventListener("close", (event) => {
-                console.log("Connection closed", event.code, event.reason);
+                document.getElementById('loadingIndicator').classList.add('hidden');
                 if (event.code != 1000) {
                     alert("Oops, we ran into an error. Refresh the page and try again.");
                 }
             });
 
             websocket.addEventListener("error", (error) => {
-                console.log('WebSocket error', error);
+                document.getElementById('loadingIndicator').classList.add('hidden');
                 alert("Oops, we ran into an error. Refresh the page and try again.");
             });
         });
